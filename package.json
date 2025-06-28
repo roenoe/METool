@@ -1,0 +1,25 @@
+{
+  "name": "metool",
+  "version": "1.0.0",
+  "description": "Mega Empires Tool",
+  "homepage": "https://github.com/roenoe/METool#readme",
+  "bugs": {
+    "url": "https://github.com/roenoe/METool/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/roenoe/METool.git"
+  },
+  "license": "MIT",
+  "author": "roenoe",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "path": "^0.12.7",
+    "url": "^0.11.4"
+  }
+}
