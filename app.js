@@ -9,25 +9,33 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const pubPath = './public/'
 
-const routes = [
-  {
-    paths: ['/', '/index.html']
-  },
-]
+app.use(express.json()) // <-- This is essential for req.body to be populated
 
-routes.forEach(route => {
-  route.paths.forEach(pathStr => {
-    app.get(pathStr, (req, res) => {
-      try {
-        res.sendFile(path.join(__dirname, `${pubPath}/${route.paths[0]}`))
-      } catch (error) {
-        console.error(error)
-        res.status(500).send('Internal server error')
-      }
-    })
-  })
+
+
+// Fetch player table
+app.get('/fetchPlayer', (req, res) => {
+  const player = sql.fetchPlayer()
+  res.send(player)
 })
 
+// Fetch civ table
+app.get('/fetchCiv', (req, res) => {
+  const civ = sql.fetchCiv()
+  res.send(civ)
+})
+
+// Player activation
+app.post('/activatePlayer', (req, res) => {
+  const { civid } = req.body
+  const civ = sql.activatePlayer(civid)
+
+  if (!civ) {
+    return res.json({ error: 'Failed to activate player' })
+  } else {
+    return res.json({ message: 'Activated player', civid: civid })
+  }
+})
 
 
 
