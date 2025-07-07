@@ -1,4 +1,5 @@
 let players = []
+
 // Try to fetch the player table
 fetchPlayer()
 async function fetchPlayer() {
@@ -6,7 +7,8 @@ async function fetchPlayer() {
     let response = await fetch('/fetchPlayer')
     let data = await response.json()
     players = data
-    displayCensusInput()
+    console.log(players)
+    displayCensusInput(false)
 
   } catch (error) {
     console.log("Error:", error)
@@ -14,7 +16,11 @@ async function fetchPlayer() {
 }
 
 
-function displayCensusInput() {
+function editCensus() {
+  displayCensusInput(true)
+}
+
+function displayCensusInput(edit) {
   const censusInput = document.getElementById("censusInput")
 
   censusInput.innerHTML = `
@@ -29,12 +35,17 @@ function displayCensusInput() {
     </table>
 
     <button onclick="calculateCensus()">Calculate</button>
+    <button onclick="editCensus()">Edit last census</button>
   `
 
-  displayCensusInputElements()
+  if (edit) {
+    displayCensusInputElements(true)
+  } else {
+    displayCensusInputElements(false)
+  }
 }
 
-function displayCensusInputElements() {
+function displayCensusInputElements(edit) {
   const censusInputTable = document.getElementById("censusInputTable")
 
   players.forEach(player => {
@@ -63,6 +74,10 @@ function displayCensusInputElements() {
     }
 
     censusInputTable.appendChild(row)
+    if (edit) {
+      const field = document.getElementById(`${player.name}-field`)
+      field.value = player.census
+    }
   })
 }
 
