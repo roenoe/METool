@@ -34,3 +34,30 @@ export function activatePlayer(civid) {
   }
   return response
 }
+
+// Toggle military
+export function toggleMilitary(playerid) {
+  const sqltext = 'update player set military = ? where id = ?'
+  const sql = db.prepare(sqltext)
+  let response = ""
+  if (checkMilitary(playerid)) {
+    response = sql.run(0, playerid)
+  } else {
+    response = sql.run(1, playerid)
+  }
+  return response
+}
+
+function checkMilitary(playerid) {
+  const sqltext = 'select military from player where id = ?'
+  const sql = db.prepare(sqltext)
+  const response = sql.all(playerid)
+  return response[0].military
+}
+
+export function sendCensus(playerid, census) {
+  const sqltext = 'update player set census = ? where id = ?'
+  const sql = db.prepare(sqltext)
+  const response = sql.run(census, playerid)
+  return response
+}

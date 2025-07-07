@@ -1,10 +1,12 @@
+let players = []
 // Try to fetch the player table
 fetchPlayer()
 async function fetchPlayer() {
   try {
     let response = await fetch('/fetchPlayer')
     let data = await response.json()
-    displayCensusInput(data)
+    players = data
+    displayCensusInput()
 
   } catch (error) {
     console.log("Error:", error)
@@ -12,7 +14,7 @@ async function fetchPlayer() {
 }
 
 
-function displayCensusInput(data) {
+function displayCensusInput() {
   const censusInput = document.getElementById("censusInput")
 
   censusInput.innerHTML = `
@@ -29,13 +31,13 @@ function displayCensusInput(data) {
     <button onclick="calculateCensus()">Calculate</button>
   `
 
-  displayCensusInputElements(data)
+  displayCensusInputElements()
 }
 
-function displayCensusInputElements(data) {
+function displayCensusInputElements() {
   const censusInputTable = document.getElementById("censusInputTable")
 
-  data.forEach(player => {
+  players.forEach(player => {
     const row = document.createElement('tr')
     row.className = player.name
     row.innerHTML = `
@@ -43,7 +45,7 @@ function displayCensusInputElements(data) {
         ${player.pri} ${player.name}
       </td>
       <td>
-        <input type="number" id="${player.name}-field" name="population">
+        <input type="number" id="${player.name}-field" name="census">
       </td>
     `
     if (player.military) {
@@ -55,7 +57,7 @@ function displayCensusInputElements(data) {
     } else {
       row.innerHTML += `
       <td>
-        <button id="${player.id}-btn" onclick='toggleMilitary("${player.playerid}-btn", ${player.playerid})'>Military</button>
+        <button id="${player.playerid}-btn" onclick='toggleMilitary("${player.playerid}-btn", ${player.playerid})'>Military</button>
       </td>
     `
     }
@@ -79,4 +81,66 @@ async function toggleMilitary(btnid, playerid) {
   } catch (error) {
     console.log("Error", error)
   }
+}
+
+let toPush = []
+async function calculateCensus() {
+  toPush = []
+
+  players.forEach(player => {
+    const field = document.getElementById(`${player.name}-field`)
+    const census = parseInt(field.value)
+
+    toPush.push({
+      playerid: player.playerid,
+      census: census
+    })
+  })
+  if (await check()) {
+    await sendCensus()
+  }
+  console.log(toPush)
+}
+
+async function check() {
+  for (var i = 0; i < toPush.length; i++) {
+    // Check if number at all
+    if (Number.isNaN(toPush[i].census)) {
+      alert("Please fill in all the fields, and only use numbers")
+      return false
+    }
+
+    // Make negative number positive
+    if (toPush[i].census < 0 && toPush[i].census >= -55) {
+      toPush[i].census += 55
+    }
+
+    // Check valid number
+    if (toPush[i].census < 0 || toPush[i].census > 55) {
+      alert("Please use a valid number. Valid numbers are between (-55) and 55 (inclusive)")
+      return false
+    }
+  }
+  return true
+}
+
+async function sendCensus() {
+  for (var i = 0; i < toPush.length; i++) {
+    console.log(toPush[i])
+    try {
+      await fetch('/sendCensus', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          playerid: toPush[i].playerid,
+          census: toPush[i].census
+        })
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+  location.reload()
 }

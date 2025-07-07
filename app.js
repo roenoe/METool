@@ -37,9 +37,32 @@ app.post('/activatePlayer', (req, res) => {
   }
 })
 
+// Toggle military for player
+app.post('/toggleMilitary', (req, res) => {
+  const { playerid } = req.body
 
+  const toggled = sql.toggleMilitary(playerid)
+  console.log(toggled)
+  if (!toggled) {
+    return res.json({ error: 'Failed to toggle military' })
+  } else {
+    return res.json({ message: 'Toggled military', playerid: playerid })
+  }
+})
 
+// Send census to database
+app.post('/sendCensus', (req, res) => {
+  const { playerid, census } = req.body
 
+  const feedback = sql.sendCensus(playerid, census)
+  console.log(feedback)
+
+  if (!feedback) {
+    return res.json({ error: 'Failed to send census' })
+  } else {
+    return res.json({ message: 'Sent census', playerid: playerid })
+  }
+})
 
 
 

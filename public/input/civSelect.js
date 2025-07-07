@@ -7,7 +7,6 @@ async function fetchPlayer() {
   try {
     let response = await fetch('/fetchPlayer')
     let data = await response.json()
-    console.log(data)
 
     // If it cannot fetch player table, instead fetch civ table for choosing whichs civs should go into player table
     if (!data) {
