@@ -8,7 +8,9 @@ async function fetchPlayer() {
     let data = await response.json()
     players = data
     console.log(players)
-    displayCensusInput(false)
+    if (players) {
+      displayCensusInput(false)
+    }
 
   } catch (error) {
     console.log("Error:", error)
