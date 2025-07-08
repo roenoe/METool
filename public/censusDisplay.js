@@ -19,13 +19,9 @@ function displayCensus(player) {
   const censusDisplay = document.getElementById("censusDisplay")
 
   censusDisplay.innerHTML = `
-    <h2>
-      This is the order in which civs should move
-    </h2>
-
-    <table id="censusTable">
+    <table id="censusTable" class="center">
       <tr>
-        <th>Civilization</th>
+        <th colspan="2">Civilization</th>
         <th>Census</th>
         <th>Military</th>
       </tr>
@@ -64,7 +60,10 @@ function displayCensusElements(players) {
     row.className = player.name
     row.innerHTML = `
       <td>
-        ${player.civid} ${player.name}
+        ${player.civid}
+      </td>
+      <td>
+        ${player.name}
       </td>
       <td>
         ${player.census}
