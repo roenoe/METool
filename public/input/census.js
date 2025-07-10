@@ -7,7 +7,6 @@ async function fetchPlayer() {
     let response = await fetch('/fetchPlayer')
     let data = await response.json()
     players = data
-    console.log(players)
     if (players) {
       displayCensusInput(false)
     }
@@ -28,7 +27,7 @@ function displayCensusInput(edit) {
   censusInput.innerHTML = `
     <table id="censusInputTable" class="center">
       <tr>
-        <th>Civilization</th>
+        <th colspan="3">Civilization</th>
         <th>Census</th>
         <th>Military</th>
       </tr>
@@ -53,7 +52,13 @@ function displayCensusInputElements(edit) {
     row.className = player.name
     row.innerHTML = `
       <td>
-        ${player.pri} ${player.name}
+        ${player.pri}
+      </td>
+      <td>
+        ${player.name}
+      </td>
+      <td>
+        ${player.playername}
       </td>
       <td>
         <input type="number" id="${player.name}-field" name="census">

@@ -3,7 +3,7 @@ const db = sqlite3('./db/database.db')
 
 // Fetch player table
 export function fetchPlayer() {
-  const sqltext = 'select player.id as playerid, civid, military, census, ast, name, pri ' +
+  const sqltext = 'select player.id as playerid, player.name as playername, civid, military, census, ast, civ.name as name, pri ' +
     ' from player inner join civ on civid = civ.id; '
   const sql = db.prepare(sqltext)
   const response = sql.all()
@@ -25,10 +25,10 @@ export function fetchCiv() {
 }
 
 // Activate player
-export function activatePlayer(civid) {
-  const sqltext = 'insert into player (civid, military, census, ast) values (?, ?, ?, ?);'
+export function activatePlayer(civid, name) {
+  const sqltext = 'insert into player (civid, military, census, ast, name) values (?, ?, ?, ?, ?);'
   const sql = db.prepare(sqltext)
-  const response = sql.run(civid, 0, 0, 0)
+  const response = sql.run(civid, 0, 0, 0, name)
   if (response.length == 0) {
     return false
   }

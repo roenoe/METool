@@ -21,7 +21,7 @@ function displayCensus(player) {
   censusDisplay.innerHTML = `
     <table id="censusTable" class="center">
       <tr>
-        <th colspan="2">Civilization</th>
+        <th colspan="3">Civilization</th>
         <th>Census</th>
         <th>Military</th>
       </tr>
@@ -64,6 +64,9 @@ function displayCensusElements(players) {
       </td>
       <td>
         ${player.name}
+      </td>
+      <td>
+        ${player.playername}
       </td>
       <td>
         ${player.census}

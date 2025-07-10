@@ -27,8 +27,8 @@ app.get('/fetchCiv', (req, res) => {
 
 // Player activation
 app.post('/activatePlayer', (req, res) => {
-  const { civid } = req.body
-  const civ = sql.activatePlayer(civid)
+  const { civid, playername } = req.body
+  const civ = sql.activatePlayer(civid, playername)
 
   if (!civ) {
     return res.json({ error: 'Failed to activate player' })

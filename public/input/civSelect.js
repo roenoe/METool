@@ -38,6 +38,7 @@ function displayCivSelect() {
     <table id="civSelectTable" class="center">
       <tr>
         <th>Civilization</th>
+        <th>Player name</th>
         <th>Button <button onclick="toggleAll()">Toggle all</button></th>
       </tr>
     </table>
@@ -50,7 +51,11 @@ function displayCivSelect() {
     const row = document.createElement('tr')
     row.className = civ.name
     row.innerHTML = `
-      <td>${civ.pri} ${civ.name}</td>
+      <td>
+        ${civ.pri} ${civ.name}
+      </td>
+      <td>
+        <input type="text" id="${civ.id}-field" name="playername" placeholder="Player name"></input>
       <td>
         <button id="${civ.name}-btn" onclick="toggleCiv('${civ.name}-btn', ${civ.id})">Toggle civ</button>
       </td>
@@ -87,21 +92,42 @@ function toggleCiv(btnid, civid) {
 }
 
 async function activatePlayers() {
-  for (var i = 0; i < pendingCivs.length; i++) {
-    await activatePlayer(pendingCivs[i])
+  if (await checkPendingCivs()) {
+    for (var i = 0; i < pendingCivs.length; i++) {
+      // Find player name
+      let playerNameField = document.getElementById(`${pendingCivs[i]}-field`)
+      await activatePlayer(pendingCivs[i], playerNameField.value)
+    }
+    location.reload()
   }
-  location.reload()
 }
 
+async function checkPendingCivs() {
+  for (var i = 0; i < pendingCivs.length; i++) {
+    // Define field value
+    let fieldValue = ""
+    fieldValue = document.getElementById(`${pendingCivs[i]}-field`).value
 
-async function activatePlayer(civid) {
+    if (fieldValue == "") {
+      alert("Make sure you write player names for all players!")
+      return false
+    }
+
+  }
+  return true
+}
+
+async function activatePlayer(civid, playername) {
   try {
     await fetch('/activatePlayer', {
       method: 'POST',
       headers: {
         'content-type': 'application/json'
       },
-      body: JSON.stringify({ civid: civid })
+      body: JSON.stringify({
+        civid: civid,
+        playername: playername
+      })
     })
   } catch (error) {
     console.log("Error", error)
