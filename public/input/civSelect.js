@@ -35,7 +35,7 @@ function displayCivSelect() {
   civSelect.innerHTML = `
     <h2>Select Civilizations for your game</h2>
 
-    <table id="civSelectTable">
+    <table id="civSelectTable" class="center">
       <tr>
         <th>Civilization</th>
         <th>Button <button onclick="toggleAll()">Toggle all</button></th>

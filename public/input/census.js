@@ -26,9 +26,7 @@ function displayCensusInput(edit) {
   const censusInput = document.getElementById("censusInput")
 
   censusInput.innerHTML = `
-    <h2>What is your census?</h2>
-
-    <table id="censusInputTable">
+    <table id="censusInputTable" class="center">
       <tr>
         <th>Civilization</th>
         <th>Census</th>
