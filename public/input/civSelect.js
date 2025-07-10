@@ -92,6 +92,10 @@ function toggleCiv(btnid, civid) {
 }
 
 async function activatePlayers() {
+  // Sort pendingCivs so that player is sorted by civ priority
+  pendingCivs.sort(function(a, b) {
+    return a - b
+  })
   if (await checkPendingCivs()) {
     for (var i = 0; i < pendingCivs.length; i++) {
       // Find player name
