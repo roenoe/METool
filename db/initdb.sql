@@ -58,6 +58,12 @@ VALUES
   (80, 'N/A', 'N/A')
 ;
 
+-- Table: game
+CREATE TABLE IF NOT EXISTS game (
+  id INTEGER PRIMARY KEY,
+  expert INTEGER NOT NULL
+);
+
 -- Table: player
 CREATE TABLE IF NOT EXISTS player (
   id INTEGER PRIMARY KEY,
