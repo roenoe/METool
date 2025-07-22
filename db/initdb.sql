@@ -31,9 +31,9 @@ VALUES
 -- Table: ast
 CREATE TABLE IF NOT EXISTS ast (
   id INTEGER PRIMARY KEY,
-  point INTEGER NOT NULL,
+  point INTEGER NOT NULL UNIQUE,
   basic TEXT,
-  expert TEXT,
+  expert TEXT
 );
 
 -- Populate ast table

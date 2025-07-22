@@ -37,6 +37,18 @@ app.post('/activatePlayer', (req, res) => {
   }
 })
 
+// AST activation
+app.post('/activateAst', (req, res) => {
+  const { expert } = req.body
+  const ast = sql.activateGame(expert)
+
+  if (!ast) {
+    return res.json({ error: 'Failed to activate AST' })
+  } else {
+    return res.json({ message: 'Activated AST', expert: expert })
+  }
+})
+
 // Toggle military for player
 app.post('/toggleMilitary', (req, res) => {
   const { playerid } = req.body

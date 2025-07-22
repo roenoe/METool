@@ -3,7 +3,7 @@ const db = sqlite3('./db/database.db')
 
 // Fetch player table
 export function fetchPlayer() {
-  const sqltext = 'select player.id as playerid, player.name as playername, civid, military, census, ast, civ.name as name, pri ' +
+  const sqltext = 'select player.id as playerid, player.name as playername, civid, military, census, astpoint, civ.name as name, pri ' +
     ' from player inner join civ on civid = civ.id; '
   const sql = db.prepare(sqltext)
   const response = sql.all()
@@ -26,9 +26,20 @@ export function fetchCiv() {
 
 // Activate player
 export function activatePlayer(civid, name) {
-  const sqltext = 'insert into player (civid, military, census, ast, name) values (?, ?, ?, ?, ?);'
+  const sqltext = 'insert into player (civid, military, census, astpoint, name) values (?, ?, ?, ?, ?);'
   const sql = db.prepare(sqltext)
   const response = sql.run(civid, 0, 0, 0, name)
+  if (response.length == 0) {
+    return false
+  }
+  return response
+}
+
+// Activate game
+export function activateGame(expert) {
+  const sqltext = 'insert into game (expert) values (?);'
+  const sql = db.prepare(sqltext)
+  const response = sql.run(expert)
   if (response.length == 0) {
     return false
   }

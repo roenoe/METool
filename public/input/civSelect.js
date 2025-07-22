@@ -43,6 +43,10 @@ function displayCivSelect() {
       </tr>
     </table>
 
+    <input type="radio" id="basic" name="astBtn" value=0 checked>Basic AST</input>
+    <input type="radio" id="expert" name="astBtn" value=1>Expert AST</input>
+    <br />
+
     <button onclick="activatePlayers()">Submit these civs as your civs for this game</button>
     ` // Empty the table
 
@@ -96,12 +100,22 @@ async function activatePlayers() {
   pendingCivs.sort(function(a, b) {
     return a - b
   })
-  if (await checkPendingCivs()) {
+
+  let astBtns = document.getElementsByName("astBtn")
+  var astType = ""
+  for (var i = 0; i < astBtns.length; i++) {
+    if (astBtns[i].checked) {
+      astType = astBtns[i].value
+    }
+  }
+
+  if (await checkPendingCivs() && pendingCivs.length > 0) {
     for (var i = 0; i < pendingCivs.length; i++) {
       // Find player name
       let playerNameField = document.getElementById(`${pendingCivs[i]}-field`)
       await activatePlayer(pendingCivs[i], playerNameField.value)
     }
+    await activateAst(astType)
     location.reload()
   }
 }
@@ -137,3 +151,18 @@ async function activatePlayer(civid, playername) {
     console.log("Error", error)
   }
 }
+
+async function activateAst(expert) {
+  try {
+    await fetch('/activateAst', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({ expert: expert })
+    })
+  } catch (error) {
+    console.log("Error", error)
+  }
+}
+
