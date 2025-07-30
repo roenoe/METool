@@ -64,6 +64,9 @@ CREATE TABLE IF NOT EXISTS game (
   expert INTEGER NOT NULL
 );
 
+-- Populate game table
+INSERT OR IGNORE INTO game (expert) VALUES (0);
+
 -- Table: player
 CREATE TABLE IF NOT EXISTS player (
   id INTEGER PRIMARY KEY,

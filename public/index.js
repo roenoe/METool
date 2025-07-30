@@ -24,6 +24,10 @@ function displayCensus(player) {
         <th colspan="3">Civilization</th>
         <th>Census</th>
         <th>Military</th>
+        <th>AST Requirement</th>
+        <th>AST VPs</th>
+        <th>ADV VPs</th>
+        <th>Total VPs</th>
       </tr>
     </table>
   `
@@ -60,7 +64,7 @@ function displayCensusElements(players) {
     row.className = player.name
     row.innerHTML = `
       <td>
-        ${player.civid}
+        ${player.pri}
       </td>
       <td>
         ${player.name}
@@ -73,6 +77,18 @@ function displayCensusElements(players) {
       </td>
       <td>
         ${player.military}
+      </td>
+      <td>
+        ${player.astreq}
+      </td>
+      <td>
+        ${player.astpoint}
+      </td>
+      <td>
+        ${player.adv}
+      </td>
+      <td>
+        ${player.adv + player.astpoint}
       </td>
     `
 

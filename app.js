@@ -76,6 +76,34 @@ app.post('/sendCensus', (req, res) => {
   }
 })
 
+// Send advances to database
+app.post('/sendADV', (req, res) => {
+  const { playerid, ADV } = req.body
+
+  const feedback = sql.sendADV(playerid, ADV)
+  console.log(feedback)
+
+  if (!feedback) {
+    return res.json({ error: 'Failed to send advances' })
+  } else {
+    return res.json({ message: 'Sent advances', playerid: playerid })
+  }
+})
+
+// Alter AST placement of player in database
+app.post('/alterAST', (req, res) => {
+  const { playerid, fwd } = req.body
+
+  const feedback = sql.alterAST(playerid, fwd)
+  console.log(feedback)
+
+  if (!feedback) {
+    return res.json({ error: 'Failed to alter AST' })
+  } else {
+    return res.json({ message: 'Altered AST', playerid: playerid })
+  }
+})
+
 
 
 

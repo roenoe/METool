@@ -3,14 +3,29 @@ const db = sqlite3('./db/database.db')
 
 // Fetch player table
 export function fetchPlayer() {
-  const sqltext = 'select player.id as playerid, player.name as playername, civid, military, census, astpoint, civ.name as name, pri ' +
-    ' from player inner join civ on civid = civ.id; '
+  let sqltext = 'select player.id as playerid, player.name as playername, military, census, astpoint, civ.name as name, pri, adv, '
+  if (checkExpert()) {
+    sqltext += 'expert as astreq'
+  } else {
+    sqltext += 'basic as astreq'
+  }
+  sqltext += ' from player inner join civ on civid = civ.id inner join ast on astpoint = ast.point;'
   const sql = db.prepare(sqltext)
   const response = sql.all()
   if (response.length == 0) {
     return false
   }
   return response
+}
+
+function checkExpert() {
+  const sqltext = 'select expert from game;'
+  const sql = db.prepare(sqltext)
+  const response = sql.all()
+  if (response.length == 0) {
+    return false
+  }
+  return response[0].expert
 }
 
 // Fetch civ table
@@ -26,9 +41,9 @@ export function fetchCiv() {
 
 // Activate player
 export function activatePlayer(civid, name) {
-  const sqltext = 'insert into player (civid, military, census, astpoint, name) values (?, ?, ?, ?, ?);'
+  const sqltext = 'insert into player (civid, military, census, astpoint, adv, name) values (?, ?, ?, ?, ?, ?);'
   const sql = db.prepare(sqltext)
-  const response = sql.run(civid, 0, 0, 0, name)
+  const response = sql.run(civid, 0, 0, 0, 0, name)
   if (response.length == 0) {
     return false
   }
@@ -37,12 +52,10 @@ export function activatePlayer(civid, name) {
 
 // Activate game
 export function activateGame(expert) {
-  const sqltext = 'insert into game (expert) values (?);'
+  //const sqltext = 'insert into game (expert) values (?);'
+  const sqltext = 'update game set expert = ? where id = 1;'
   const sql = db.prepare(sqltext)
   const response = sql.run(expert)
-  if (response.length == 0) {
-    return false
-  }
   return response
 }
 
@@ -71,4 +84,32 @@ export function sendCensus(playerid, census) {
   const sql = db.prepare(sqltext)
   const response = sql.run(census, playerid)
   return response
+}
+
+export function sendADV(playerid, ADV) {
+  const sqltext = 'update player set adv = ? where id = ?'
+  const sql = db.prepare(sqltext)
+  const response = sql.run(ADV, playerid)
+  return response
+}
+
+export function alterAST(playerid, fwd) {
+  const prevAST = checkAST(playerid)
+  const sqltext = 'update player set astpoint = ? where id = ?;'
+  const sql = db.prepare(sqltext)
+  let newAST = prevAST
+  if (fwd) {
+    newAST += 5
+  } else {
+    newAST -= 5
+  }
+  const response = sql.run(newAST, playerid)
+  return response
+}
+
+function checkAST(playerid) {
+  const sqltext = 'select astpoint from player where id = ?'
+  const sql = db.prepare(sqltext)
+  const response = sql.get(playerid)
+  return response.astpoint
 }

@@ -29,11 +29,14 @@ function displayCensusInput(edit) {
       <tr>
         <th colspan="3">Civilization</th>
         <th>Census</th>
+        <th colspan="2">AST</th>
+        <th>Advances</th>
         <th>Military</th>
       </tr>
     </table>
 
-    <button onclick="calculateCensus()">Calculate</button>
+    <button onclick="calculateCensus()">Calculate Census</button>
+    <button onclick="calculateAdvances()">Calculate Advances</button>
     <button onclick="editCensus()">Edit last census</button>
   `
 
@@ -50,6 +53,7 @@ function displayCensusInputElements(edit) {
   players.forEach(player => {
     const row = document.createElement('tr')
     row.className = player.name
+    row.id = player.pri + "row"
     row.innerHTML = `
       <td>
         ${player.pri}
@@ -63,11 +67,19 @@ function displayCensusInputElements(edit) {
       <td>
         <input type="number" id="${player.name}-field" name="census">
       </td>
+        ${player.astreq}
+      <td>
+        <button id="{player.playerid}-bwd" onclick='alterAST(${player.playerid}, false)'><-</button>
+        <button id="{player.playerid}-fwd" onclick='alterAST(${player.playerid}, true)'>-></button>
+      </td>
+      <td>
+        <input type="number" id="${player.name}-ADVField" name="advances" placeholder="Previous: ${player.adv}">
+      </td>
     `
     if (player.military) {
       row.innerHTML += `
         <td>
-          <button id="${player.id}-btn" class="green" onclick='toggleMilitary("${player.playerid}-btn", ${player.playerid})'>Military</button>
+          <button id="${player.playerid}-btn" class="green" onclick='toggleMilitary("${player.playerid}-btn", ${player.playerid})'>Military</button>
         </td>
       `
     } else {
@@ -122,6 +134,27 @@ async function calculateCensus() {
   console.log(toPush)
 }
 
+async function calculateAdvances() {
+  let ADVToPush = []
+  for (var i = 0; i < players.length; i++) {
+    let player = players[i]
+    const field = document.getElementById(`${player.name}-ADVField`)
+    const ADV = parseInt(field.value)
+
+    // Alert and abort if undefined
+    if (isNaN(ADV)) {
+      alert("Make sure all players' advance VP totals are input")
+      return false
+    }
+
+    ADVToPush.push({
+      playerid: player.playerid,
+      ADV: ADV
+    })
+  }
+  await sendAdvances(ADVToPush)
+}
+
 async function check() {
   for (var i = 0; i < toPush.length; i++) {
     // Check if number at all
@@ -144,6 +177,8 @@ async function check() {
   return true
 }
 
+async function checkADV() { }
+
 async function sendCensus() {
   for (var i = 0; i < toPush.length; i++) {
     console.log(toPush[i])
@@ -163,4 +198,43 @@ async function sendCensus() {
     }
   }
   location.reload()
+}
+
+async function sendAdvances(data) {
+  for (var i = 0; i < data.length; i++) {
+    console.log(data[i])
+    try {
+      await fetch('/sendADV', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          playerid: data[i].playerid,
+          ADV: data[i].ADV
+        })
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+  location.reload()
+}
+
+async function alterAST(playerid, fwd) {
+  try {
+    await fetch('/alterAST', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        playerid: playerid,
+        fwd: fwd
+      })
+    })
+  } catch (error) {
+    console.error(error)
+  }
+  fetchPlayer()
 }
