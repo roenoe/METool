@@ -136,3 +136,18 @@ a {
   background-color: #847C49;
   color: #FFFFFF;
 }
+
+.split-table-container {
+  display: flex;
+  justify-content: space-around;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 20px;
+}
+
+.split-table {
+  width: 45%;
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  text-align: center;
+}
