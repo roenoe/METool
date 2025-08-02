@@ -15,7 +15,6 @@ async function fetchCensus() {
 }
 
 function displayCensus(player) {
-  const orderedPlayer = calculateCensus(player)
   const censusDisplay = document.getElementById("censusDisplay")
 
   censusDisplay.innerHTML = `
@@ -40,12 +39,12 @@ function displayCensus(player) {
     </div>
   `
 
-  displayCensusElements(orderedPlayer)
+  displayCensusElements(player)
 }
 
-function calculateCensus(player) {
-  // Sort by military (ascending)
-  const orderedPlayer = player.sort((a, b) => {
+function orderByCensus(player) {
+  return [...player].sort((a, b) => {
+    // Sort by military (ascending)
     if (a.military !== b.military) {
       return a.military - b.military;
     }
@@ -56,26 +55,34 @@ function calculateCensus(player) {
     // Then by priority (ascending)
     return a.pri - b.pri;
   })
-  return orderedPlayer
+}
+
+function orderByVPs(player) {
+  // Sort by Total VPs (descending)
+  return [...player].sort((a, b) => {
+    // Define total VPs
+    const aTotalVPs = a.adv + a.astpoint
+    const bTotalVPs = b.adv + b.astpoint
+
+    // Sort by total VPs (descending)
+    if (aTotalVPs !== bTotalVPs) {
+      return bTotalVPs - aTotalVPs
+    }
+    // Then by priority (ascending)
+    return a.pri - b.pri;
+  })
 }
 
 function displayCensusElements(players) {
   const leftTable = document.getElementById("leftTable")
   const rightTable = document.getElementById("rightTable")
 
+  // Prepare a sorted copy for the left table
+  const sortedByCensus = orderByCensus(players)
   // Prepare a sorted copy for the right table
-  const sortedByVPs = [...players].sort((a, b) => {
-    const totalA = a.adv + a.astpoint
-    const totalB = b.adv + b.astpoint
+  const sortedByVPs = orderByVPs(players)
 
-    if (totalA !== totalB) {
-      return totalB - totalA // Descending
-    }
-
-    return a.pri - b.pri // Tiebreak
-  })
-
-  players.forEach(player => {
+  sortedByCensus.forEach(player => {
     const rowClass = player.name
     const military = player.military == 0 ? "No" : "Yes"
 
