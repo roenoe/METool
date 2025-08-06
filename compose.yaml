@@ -1,0 +1,30 @@
+services:
+  metool:
+    build: .
+    # ports:
+    #   - "21570:21570"
+    volumes:
+      - metool.db:/root/METool/db
+    command: >
+      sh -c "
+        if [ ! -f /root/METool/db/database.db ]; then
+          echo 'Initializing database...' &&
+          touch /root/METool/db/database.db &&
+          sqlite3 /root/METool/db/database.db < /root/METool/db/initdb.sql;
+        fi &&
+        node app.js
+      "
+    restart: always
+
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - metool
+    restart: always
+
+volumes:
+  metool.db:
