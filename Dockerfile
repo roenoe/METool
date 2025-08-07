@@ -1,23 +1,27 @@
-# Start from alpine (small base)
+# Start with an alpline linux base
 FROM alpine
 
+# Label myself as maintainer
 MAINTAINER roenoe
+
+# Set working directory in the container
+WORKDIR /app
 
 # Install dependencies
 RUN apk update
-RUN apk add git nodejs npm sqlite
+RUN apk add nodejs npm sqlite
 
-# Clone application code
-WORKDIR /root
-RUN git clone https://github.com/roenoe/METool
-WORKDIR /root/METool
-
-# Install npm dependencies and create the database
+# Install necessary npm dependencies
+COPY package*.json ./
 RUN npm i
-RUN touch db/database.db
-RUN sqlite3 db/database.db < db/initdb.sql
 
-# Expose the port for the application
+# Copy the rest of my application
+COPY . .
+
+# Initialize the database
+RUN sh initdb.sh
+
+# Expose the port the application will run on
 EXPOSE 21570
 
 # Start application
