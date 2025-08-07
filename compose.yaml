@@ -1,14 +1,23 @@
 services:
   metool:
-    #build: .
-    image: roenoe/metool
+    image: node
+    # Use a bind mount to sync the local project directory with the container's /app folder
+    # This means any changes you make locally will be immediately available in the container
     volumes:
+      - .:/app
+      # The database volume is still defined to persist your data
       - metool_db:/app/db
-    command: [ "/usr/local/bin/entrypoint.sh" ]
+
+    # Set the working directory inside the container
+    # This is where the application's code will be located
+    working_dir: /app
+
+    # Overwrite the default container command to install dependencies and run the application
+    entrypoint: sh -c "chmod +x startup.sh && ./startup.sh"
     restart: always
 
   nginx:
-    image: nginx
+    image: nginx:latest
     ports:
       - "80:80"
     volumes:
