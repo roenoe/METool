@@ -15,14 +15,15 @@ RUN apk add nodejs npm sqlite
 COPY package*.json ./
 RUN npm i
 
+# Add entrypoint.sh to $PATH
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 # Copy the rest of my application
 COPY . .
-
-# Initialize the database
-RUN sh initdb.sh
 
 # Expose the port the application will run on
 EXPOSE 21570
 
 # Start application
-CMD [ "node", "app.js" ]
+CMD [ "/usr/local/bin/entrypoint.sh" ]

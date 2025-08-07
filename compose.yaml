@@ -1,19 +1,10 @@
 services:
   metool:
-    build: .
-    # ports:
-    #   - "21570:21570"
+    #build: .
+    image: roenoe/metool
     volumes:
-      - metool.db:/root/METool/db
-    command: >
-      sh -c "
-        if [ ! -f /root/METool/db/database.db ]; then
-          echo 'Initializing database...' &&
-          touch /root/METool/db/database.db &&
-          sqlite3 /root/METool/db/database.db < /root/METool/db/initdb.sql;
-        fi &&
-        node app.js
-      "
+      - metool_db:/app/db
+    command: [ "/usr/local/bin/entrypoint.sh" ]
     restart: always
 
   nginx:
@@ -27,4 +18,4 @@ services:
     restart: always
 
 volumes:
-  metool.db:
+  metool_db:
